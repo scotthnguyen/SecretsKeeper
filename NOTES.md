@@ -46,3 +46,27 @@ invisible secrets.
 (`/health`) and CLI (renders a box), `HANDOFF.md`. Verified `npm run typecheck`, Ink render, and
 `curl /health`. Noticed TypeScript 7.0 is now latest and pinned `~5.9` deliberately. Noticed my
 `server/.env` already contained real credentials and gitignored it before the first commit.
+
+## 2026-08-30 — Phase 1: schema, resolver (TDD), repos, seed
+
+**Handoff.** "Go" after verifying Phase 0. Schema + permission resolver test-first, repositories,
+seed fixture, no HTTP yet.
+
+**What the LLM did.** `db/schema.sql` (FK on, CHECK constraints, `UNIQUE(secret_id, principal_type,
+principal_id)`; `secrets.owner_id` deliberately has no cascade so the DB itself refuses to delete a
+user who still owns secrets — the transfer rule is enforced structurally). Wrote 14 resolver tests
+first, ran them red, then `permissions.ts` (pure function, ~40 lines), green. Repo layer aggregates
+`teamIds`/`memberIds` with `json_group_array` so directory listings are one query. `services/secrets.ts`
+is the only path handlers will use: it never returns anything the caller can't see (value nulled
+for write-only, grants nulled for non-owners, `undefined` ⇒ 404). Seed fixture is a reusable
+`seedDatabase(db)` so the integration test runs the real seed into `:memory:` and asserts what each
+seeded user sees — this is the demo script, executable.
+
+**Overrides.** None.
+
+**LLM mistakes.**
+- Phase 0 verify snippet put `# comments` on the same line as `npm run ...`; npm forwards trailing
+  args to the script, so `tsc` received `# three workspaces, clean` as file names. Harmless, but
+  it cost a round-trip. Rule: no inline comments on command lines.
+- Integration test expected `carol` to be a non-owner of `NPM_TOKEN` while the test title said
+  "owns NPM_TOKEN". Test bug, not code bug; caught by the red run.

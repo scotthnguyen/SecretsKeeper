@@ -3,12 +3,13 @@
  * independent of how the user was identified:
  *
  *   devHeaderAuth  AUTH_MODE=dev   `X-Dev-User: <githubLogin>`    (curl testing, CLI dev mode)
- *   sessionAuth    default         `Authorization: Bearer <token>` (Phase 3)
+ *   sessionAuth    default         `Authorization: Bearer <token>`
  */
 import type { RequestHandler } from 'express';
 import { HEADERS } from '@secrets/shared';
 import type { Db } from '../db/index.js';
 import type { Caller } from '../permissions.js';
+import { findSessionUser } from '../repo/sessions.js';
 import { getCaller, getUserByLogin } from '../repo/users.js';
 import { ApiError, forbidden } from './errors.js';
 
@@ -37,11 +38,24 @@ export function devHeaderAuth(db: Db): RequestHandler {
   };
 }
 
-/** Placeholder until Phase 3 lands real sessions. */
-export function sessionAuth(_db: Db): RequestHandler {
-  return () => {
-    throw unauthenticated('Session auth not implemented yet (start with AUTH_MODE=dev)');
+export function sessionAuth(db: Db): RequestHandler {
+  return (req, _res, next) => {
+    const token = bearerToken(req.header(HEADERS.authorization));
+    if (!token) {
+      throw unauthenticated('Missing Authorization: Bearer <token>');
+    }
+    const userId = findSessionUser(db, token);
+    if (!userId) {
+      throw unauthenticated('Session is invalid or expired. Log in again.');
+    }
+    req.caller = getCaller(db, userId);
+    next();
   };
+}
+
+export function bearerToken(header: string | undefined): string | undefined {
+  const match = /^Bearer\s+(\S+)$/i.exec(header ?? '');
+  return match?.[1];
 }
 
 /** Handlers call this instead of touching req.caller directly; guarantees a Caller. */

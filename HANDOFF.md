@@ -29,8 +29,11 @@ detail you need to build the CLI before the server endpoints exist.
 
 ## Running the server
 
-**Status:** Phase 2 landed — every non-`/auth` route works in `AUTH_MODE=dev`. Phase 3 (`/auth/*`,
-Bearer sessions) is next. `bash server/scripts/curl.sh` walks the whole API and shows real responses.
+**Status:** Phases 2 and 3 landed — the whole API works in both auth modes. `bash server/scripts/curl.sh`
+walks the API in dev mode. **`server/scripts/login.ts` is a working reference implementation of the
+CLI side of the login handshake** (loopback, state check, exchange, /me) — copy its shape.
+GitHub ignores the port on `localhost` callback URLs, so a second server on another port works
+with the same OAuth App.
 
 ```
 npm run seed -w server                          # creates server/data/secrets.db

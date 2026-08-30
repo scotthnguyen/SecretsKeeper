@@ -89,3 +89,20 @@ verified the orphan-grant query returns 0 after user and team deletion.
 - First draft used `ROUTES.secret(':id' as unknown as number)` to reuse the shared path helpers as
   Express patterns. Ugly cast; replaced with `` `${ROUTES.secrets}/:id` `` before commit.
 - Left a `void conflict;` to silence an unused import instead of removing the import. Removed.
+
+## 2026-08-30 — Phase 3: GitHub OAuth, sessions, exchange-code hop
+
+**Handoff.** "Go" after the curl walkthrough matched every header's claim.
+
+**What the LLM did.** `repo/sessions.ts` (random 32 bytes, SHA-256 stored, fixed expiry),
+`findUserForGithubAccount` (github_id first; login only while unbound; a re-registered username is
+rejected), `services/auth.ts` (three hops with in-memory state/exchange maps + TTL sweeps),
+`routes/auth.ts`, real `sessionAuth`, startup guard that refuses session mode without GitHub creds.
+Tests for the binding rules and expiry (30 total now). `scripts/login.ts` plays the CLI's part of the
+handshake — used to verify end-to-end and handed to the CLI session as a reference. Probed every
+auth route on a session-mode scratch server without touching GitHub (minted a session directly).
+
+**Overrides.** None.
+
+**LLM mistakes.** None caught in this phase. (The browser round-trip itself is verified by the
+human, below, since it needs a real GitHub account.)

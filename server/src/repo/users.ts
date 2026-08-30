@@ -81,3 +81,24 @@ export function setTeams(db: Db, userId: number, teamIds: number[]): void {
 export function deleteUser(db: Db, userId: number): void {
   db.prepare('DELETE FROM users WHERE id = ?').run(userId);
 }
+
+/**
+ * Map a GitHub account to a provisioned user.
+ *
+ *  1. github_id match → that user (immutable id; survives username renames).
+ *  2. else login match with github_id IS NULL → first login: bind github_id, return that user.
+ *  3. else → undefined. This includes the case "login matches but is bound to a different
+ *     github_id": someone re-registered an old username. They must not inherit the account.
+ */
+export function findUserForGithubAccount(db: Db, github: { id: number; login: string }): User | undefined {
+  const byId = db.prepare('SELECT id FROM users WHERE github_id = ?').get(github.id) as { id: number } | undefined;
+  if (byId) return getUserById(db, byId.id);
+
+  const unbound = db
+    .prepare('SELECT id FROM users WHERE github_login = ? AND github_id IS NULL')
+    .get(github.login) as { id: number } | undefined;
+  if (!unbound) return undefined;
+
+  db.prepare('UPDATE users SET github_id = ?, github_login = ? WHERE id = ?').run(github.id, github.login, unbound.id);
+  return getUserById(db, unbound.id);
+}

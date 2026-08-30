@@ -11,8 +11,12 @@ try {
   // no .env — fine in dev-header mode and in tests
 }
 
+const port = Number(process.env.PORT ?? 4000);
+
 export const config = {
-  port: Number(process.env.PORT ?? 4000),
+  port,
+  /** Where GitHub sends the browser back. Must match the OAuth App's callback URL host. */
+  publicUrl: process.env.PUBLIC_URL ?? `http://localhost:${port}`,
   dbPath: process.env.DB_PATH ?? path.join(SERVER_ROOT, 'data', 'secrets.db'),
   /** 'dev' enables X-Dev-User header auth. Anything else = real sessions. */
   authMode: process.env.AUTH_MODE === 'dev' ? ('dev' as const) : ('session' as const),

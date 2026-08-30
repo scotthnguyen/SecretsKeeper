@@ -70,3 +70,22 @@ seeded user sees — this is the demo script, executable.
   it cost a round-trip. Rule: no inline comments on command lines.
 - Integration test expected `carol` to be a non-owner of `NPM_TOKEN` while the test title said
   "owns NPM_TOKEN". Test bug, not code bug; caught by the red run.
+
+## 2026-08-30 — Phase 2: HTTP API with dev-header auth
+
+**Handoff.** "Go" after verifying Phase 1 (tests, seed, sqlite query).
+
+**What the LLM did.** `http/auth.ts` (two middlewares, one `req.caller`), `http/errors.ts`
+(`ApiError` → envelope; `uniqueOr409` maps SQLite UNIQUE violations to 409 so uniqueness has one
+owner: the schema), `http/validate.ts`, write-side of `services/secrets.ts` (`validateGrants` is the
+code that does what the polymorphic table's missing FK can't), `services/admin.ts` (delete-user
+transfers secrets inside a transaction; delete-team drops grants by hand), three route files,
+`app.ts`/`index.ts`, and `scripts/curl.sh` — a 20-step walkthrough. Ran it against a scratch DB;
+verified the orphan-grant query returns 0 after user and team deletion.
+
+**Overrides.** None.
+
+**LLM mistakes.**
+- First draft used `ROUTES.secret(':id' as unknown as number)` to reuse the shared path helpers as
+  Express patterns. Ugly cast; replaced with `` `${ROUTES.secrets}/:id` `` before commit.
+- Left a `void conflict;` to silence an unused import instead of removing the import. Removed.

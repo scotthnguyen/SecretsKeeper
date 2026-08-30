@@ -27,7 +27,10 @@ detail you need to build the CLI before the server endpoints exist.
                     and `ERROR_STATUS`. Branch on `code`, not on HTTP status.
 - `constants.ts`  — `DEFAULT_SERVER_URL`, `HEADERS`, `CLI_ENV`, `CLI_LOOPBACK_PATH`, `SESSION_TTL_MS`.
 
-## Running the server (once Phase 2 lands — poll `git log -- server/`)
+## Running the server
+
+**Status:** Phase 2 landed — every non-`/auth` route works in `AUTH_MODE=dev`. Phase 3 (`/auth/*`,
+Bearer sessions) is next. `bash server/scripts/curl.sh` walks the whole API and shows real responses.
 
 ```
 npm run seed -w server                          # creates server/data/secrets.db

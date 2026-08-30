@@ -1,13 +1,13 @@
-// Phase 0 placeholder: proves the toolchain. Replaced in Phase 2.
-import express from 'express';
-import { ROUTES } from '@secrets/shared';
+import { createApp } from './app.js';
+import { config } from './config.js';
+import { openDb } from './db/index.js';
 
-const app = express();
-app.get(ROUTES.health, (_req, res) => {
-  res.json({ ok: true });
-});
+const db = openDb(config.dbPath);
+const app = createApp(db);
 
-const port = Number(process.env.PORT ?? 4000);
-app.listen(port, () => {
-  console.log(`server listening on http://localhost:${port}`);
+app.listen(config.port, () => {
+  console.log(`server listening on http://localhost:${config.port}  auth=${config.authMode}  db=${config.dbPath}`);
+  if (config.authMode === 'dev') {
+    console.log('DEV AUTH: identify with header  X-Dev-User: <githubLogin>');
+  }
 });

@@ -108,3 +108,32 @@ export function insertGrants(db: Db, secretId: number, grants: Grant[]): void {
     stmt.run(secretId, g.principal.type, g.principal.id, g.canRead ? 1 : 0, g.canWrite ? 1 : 0);
   }
 }
+
+export function updateSecretValue(db: Db, id: number, value: string): void {
+  db.prepare(
+    "UPDATE secrets SET value = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?",
+  ).run(value, id);
+}
+
+/** Full replace of a secret's grant list, atomically. */
+export function replaceGrants(db: Db, secretId: number, grants: Grant[]): void {
+  db.transaction(() => {
+    db.prepare('DELETE FROM grants WHERE secret_id = ?').run(secretId);
+    insertGrants(db, secretId, grants);
+  })();
+}
+
+/** Grants cascade via FK. */
+export function deleteSecret(db: Db, id: number): void {
+  db.prepare('DELETE FROM secrets WHERE id = ?').run(id);
+}
+
+/** Move every secret owned by `fromUserId` to `toUserId`. Returns how many moved. */
+export function transferOwnership(db: Db, fromUserId: number, toUserId: number): number {
+  return db.prepare('UPDATE secrets SET owner_id = ? WHERE owner_id = ?').run(toUserId, fromUserId).changes;
+}
+
+/** The polymorphic-table cleanup: grants have no FK to users/teams, so we delete them by hand. */
+export function deleteGrantsForPrincipal(db: Db, type: PrincipalType, id: number): void {
+  db.prepare('DELETE FROM grants WHERE principal_type = ? AND principal_id = ?').run(type, id);
+}

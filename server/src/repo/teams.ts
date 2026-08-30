@@ -42,3 +42,8 @@ export function listTeams(db: Db, orgId: number): Team[] {
 export function addMember(db: Db, teamId: number, userId: number): void {
   db.prepare('INSERT OR IGNORE INTO team_members (team_id, user_id) VALUES (?, ?)').run(teamId, userId);
 }
+
+/** Memberships cascade. Grants naming the team do not — the service deletes them first. */
+export function deleteTeam(db: Db, teamId: number): void {
+  db.prepare('DELETE FROM teams WHERE id = ?').run(teamId);
+}

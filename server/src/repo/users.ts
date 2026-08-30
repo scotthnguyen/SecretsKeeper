@@ -63,3 +63,21 @@ export function getCaller(db: Db, userId: number): Caller | undefined {
   const u = getUserById(db, userId);
   return u && { id: u.id, orgId: u.orgId, isAdmin: u.isAdmin, teamIds: u.teamIds };
 }
+
+export function setAdmin(db: Db, userId: number, isAdmin: boolean): void {
+  db.prepare('UPDATE users SET is_admin = ? WHERE id = ?').run(isAdmin ? 1 : 0, userId);
+}
+
+/** Full replace of team memberships. Caller has validated the team ids. */
+export function setTeams(db: Db, userId: number, teamIds: number[]): void {
+  db.transaction(() => {
+    db.prepare('DELETE FROM team_members WHERE user_id = ?').run(userId);
+    const ins = db.prepare('INSERT INTO team_members (team_id, user_id) VALUES (?, ?)');
+    for (const teamId of teamIds) ins.run(teamId, userId);
+  })();
+}
+
+/** Memberships and sessions cascade. Owned secrets do NOT — transfer them first or this throws. */
+export function deleteUser(db: Db, userId: number): void {
+  db.prepare('DELETE FROM users WHERE id = ?').run(userId);
+}

@@ -1,0 +1,26 @@
+{
+  "name": "secretskeeper",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "shared",
+    "server",
+    "cli"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "typecheck": "npm run typecheck --workspaces",
+    "test": "npm test -w server",
+    "seed": "npm run seed -w server",
+    "dev:server": "npm run dev -w server",
+    "dev:cli": "npm run dev -w cli"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "tsx": "^4.23.13",
+    "typescript": "~5.9.3"
+  }
+}

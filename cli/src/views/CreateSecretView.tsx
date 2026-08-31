@@ -74,7 +74,7 @@ export function CreateSecretView() {
     step === 'key' || step === 'value'
       ? [['enter', 'next'], ['esc', step === 'key' ? 'cancel' : 'back']]
       : step === 'share'
-        ? [['space', 'toggle'], ['r', 'read'], ['w', 'write'], ['enter', 'next'], ['esc', 'back']]
+        ? [['space', 'read'], ['w', 'write'], ['enter', 'next'], ['esc', 'back']]
         : step === 'confirm'
           ? [['enter', 'create'], ['esc', 'back']]
           : [];

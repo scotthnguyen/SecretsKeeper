@@ -1,7 +1,7 @@
 // Grant editor used by the create flow and by the owner's "sharing" action on a secret.
 // Rows = every principal in the org (everyone / each team / each user except the owner).
-// Space toggles a row on (read+write, the sane default) or off; r / w flip the individual bits
-// because the model keeps them independent (write does not imply read).
+// Two keys, two bits: space toggles read, w toggles write. The model keeps them independent
+// (write does not imply read), so write-only is a legal, visible state.
 import React, { useMemo, useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import type { Grant, Principal } from '@secrets/shared';
@@ -53,8 +53,7 @@ export function ShareEditor({ dir, ownerId, initial, onSubmit, onCancel, focus =
     (input, key) => {
       if (key.upArrow || input === 'k') setIndex((i) => (i === 0 ? rows.length - 1 : i - 1));
       if (key.downArrow || input === 'j') setIndex((i) => (i === rows.length - 1 ? 0 : i + 1));
-      if (input === ' ') update((r) => (r.canRead || r.canWrite ? { ...r, canRead: false, canWrite: false } : { ...r, canRead: true, canWrite: true }));
-      if (input === 'r') update((r) => ({ ...r, canRead: !r.canRead }));
+      if (input === ' ' || input === 'r') update((r) => ({ ...r, canRead: !r.canRead }));
       if (input === 'w') update((r) => ({ ...r, canWrite: !r.canWrite }));
       if (key.return) {
         onSubmit(
@@ -74,9 +73,9 @@ export function ShareEditor({ dir, ownerId, initial, onSubmit, onCancel, focus =
   return (
     <Box flexDirection="column">
       <Text>
-        Share with <Text dimColor>({selectedCount} selected · space = read+write, r / w = individual)</Text>
+        Share with <Text dimColor>({selectedCount} selected · space = read, w = write)</Text>
       </Text>
-      <Text dimColor>  write without read = can change the value but never see it</Text>
+      <Text dimColor>  write does not include read: a write-only principal can change the value but never see it</Text>
       {top > 0 && <Text dimColor>  ↑ {top} more</Text>}
       {visible.map((row, i) => {
         const selected = top + i === index;

@@ -93,7 +93,7 @@ export function SecretDetailView({ id }: { id: number }) {
     hints.push(['r', 'refresh'], ['esc', 'back']);
   } else if (mode.kind === 'edit-value') hints.push(['enter', 'save'], ['esc', 'cancel']);
   else if (mode.kind === 'confirm-delete') hints.push(['y', 'delete'], ['n', 'keep']);
-  else if (mode.kind === 'edit-grants') hints.push(['space', 'toggle'], ['r', 'read'], ['w', 'write'], ['enter', 'save'], ['esc', 'cancel']);
+  else if (mode.kind === 'edit-grants') hints.push(['space', 'read'], ['w', 'write'], ['enter', 'save'], ['esc', 'cancel']);
 
   return (
     <Screen title={secret ? secret.key : 'secret'} identity={identityOf(me)} hints={hints}>

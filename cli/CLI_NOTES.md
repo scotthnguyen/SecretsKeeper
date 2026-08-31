@@ -57,9 +57,11 @@ views/         Login, MainMenu, SecretList, SecretDetail, CreateSecret, Director
 - **Create is a 4-step wizard** (key → value → share → confirm) rather than a form with focus
   management: Enter advances, Esc backs up, and the key is validated client-side with the same
   `SecretKeySchema` the server uses. A 409 returns the user to the key step with the server message.
-- **Share editor semantics match decision 13**: selecting a principal defaults to read+write, `r`/`w`
-  toggle independently, and a write-only row is legal (the legend explains what it means). Grants
-  are sent as a full replace, matching `PUT /secrets/:id/grants`.
+- **Share editor: two keys, two bits** — space toggles read, `w` toggles write (human override of
+  decision 13's "selecting defaults to read+write": one key = one meaning beats a three-key scheme
+  where space was a convenience for both). Write-only remains a legal, labelled state; the legend
+  says write does not include read. Grants are sent as a full replace (`PUT /secrets/:id/grants`).
+  CLAUDE.md decision 13 should be updated to match by the human.
 - **Session-mode 401 anywhere** (not just at boot) drops `session.json` and returns to the login
   view with a warning; the `ApiClient` calls back into `App`, views don't handle it.
 - **Dev mode has no "Log out"** — there's no session to revoke, so the item reads "Quit". Session

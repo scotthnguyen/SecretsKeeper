@@ -1,13 +1,13 @@
 // Arrow-key list. Generic over the item; the parent owns what happens on Enter.
 // Long lists scroll inside a window of `maxVisible` rows.
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, type ReactNode } from 'react';
 import { Box, Text, useInput } from 'ink';
 
 export type MenuItem<T> = {
   key: string;
   label: string;
-  /** Dim text to the right of the label. */
-  hint?: string;
+  /** Text (dim) or any node to the right of the label. */
+  hint?: ReactNode;
   /** Rendered dim and skipped by Enter. */
   disabled?: boolean;
   value: T;
@@ -95,8 +95,8 @@ export function Menu<T>({
                 {item.label}
               </Text>
             </Box>
-            {item.hint && (
-              <Text dimColor wrap="truncate">
+            {item.hint !== undefined && (
+              <Text dimColor={typeof item.hint === 'string'} wrap="truncate">
                 {labelWidth ? '' : '  '}
                 {item.hint}
               </Text>

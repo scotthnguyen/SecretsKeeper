@@ -71,11 +71,11 @@ export function Field({ label, children, width = 10 }: { label: string; children
   );
 }
 
-/** "ORW"-style access badge. */
-export function AccessBadge({ access }: { access: { isOwner: boolean; canRead: boolean; canWrite: boolean } }) {
-  if (access.isOwner) return <Text color="yellow">owner</Text>;
+/** Access badge: owner / read / write / read+write. `width` pads so columns line up. */
+export function AccessBadge({ access, width = 0 }: { access: { isOwner: boolean; canRead: boolean; canWrite: boolean }; width?: number }) {
+  if (access.isOwner) return <Text color="yellow">{'owner'.padEnd(width)}</Text>;
   const parts: string[] = [];
   if (access.canRead) parts.push('read');
   if (access.canWrite) parts.push('write');
-  return <Text color={access.canRead ? 'green' : 'blue'}>{parts.join('+') || 'none'}</Text>;
+  return <Text color={access.canRead ? 'green' : 'blue'}>{(parts.join('+') || 'none').padEnd(width)}</Text>;
 }

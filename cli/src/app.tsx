@@ -8,6 +8,8 @@ import { NavContext, SessionContext, useNav, type Nav, type Route, type Session 
 import { clearSession, loadSession, saveSession } from './session.js';
 import { LoginView } from './views/LoginView.js';
 import { MainMenu } from './views/MainMenu.js';
+import { SecretListView } from './views/SecretListView.js';
+import { SecretDetailView } from './views/SecretDetailView.js';
 import { Screen, ErrorLine } from './ui/Screen.js';
 
 type Phase =
@@ -179,6 +181,10 @@ function Router({ route }: { route: Route }) {
   switch (route.name) {
     case 'menu':
       return <MainMenu />;
+    case 'secrets':
+      return <SecretListView />;
+    case 'secret':
+      return <SecretDetailView key={route.id} id={route.id} />;
     default:
       return <NotBuilt name={route.name} />;
   }

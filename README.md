@@ -6,8 +6,6 @@ number of teams; every secret can be shared with any mix of users, teams, or the
 read and write granted separately. Login is GitHub OAuth from the terminal — the browser opens,
 you authorize, you're back in the CLI.
 
-Take-home for ChipAgents. Design decisions are in [`CLAUDE.md`](CLAUDE.md); the LLM-usage writeup
-is in [`LLM_USAGE.md`](LLM_USAGE.md) (raw log in [`NOTES.md`](NOTES.md)).
 
 ```
 cli/      Ink 7 TUI          shared/   HTTP contract (zod schemas, routes, error codes)

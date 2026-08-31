@@ -27,9 +27,11 @@ export function App({ config }: { config: Config }) {
   const mode: Session['mode'] = config.devUser ? 'dev' : 'session';
 
   /** Any 401 while using the app in session mode: the token is dead, back to login. */
-  const onUnauthenticated = useCallback(() => {
+  const onUnauthenticated = useCallback((err: ApiError) => {
     clearSession();
-    setPhase({ kind: 'login', notice: 'Your session expired or was revoked. Log in again.', tone: 'warn' });
+    // Show the server's reason verbatim: "invalid or expired" is the normal case, but a session
+    // token sent to an AUTH_MODE=dev server is also a 401 and the user needs to see that.
+    setPhase({ kind: 'login', notice: `Session rejected by the server: ${err.message}`, tone: 'warn' });
   }, []);
 
   const boot = useCallback(async () => {

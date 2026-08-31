@@ -92,6 +92,17 @@ views/         Login, MainMenu, SecretList, SecretDetail, CreateSecret, Director
   `DEPLOY_KEY` belonged to `dannyrose30`). Reseeded before verifying the UI; reseeded again at the
   end since verifying the admin menu deletes `bob` and mutates grants.
 
+## Incident: "session expired" right after a successful login
+
+Cause: a stray `AUTH_MODE=dev` server (started by the CLI session) held :4000 while the human ran the
+CLI in session mode. Dev mode still serves `/auth/github/*` and `/auth/cli/exchange` (server/.env was
+loaded), so OAuth succeeded and the CLI got a token, but the first Bearer request hit `devHeaderAuth`
+→ 401 → the CLI printed the generic "session expired". Fix on the CLI side: the login notice now
+quotes the server's 401 message ("Dev mode: send x-dev-user header" vs "Session is invalid or
+expired"). Suggestion for the server owner (not changed here): in `AUTH_MODE=dev` either refuse
+`/auth/github/start` with a clear message or accept Bearer sessions too, so the two modes cannot
+half-work against each other.
+
 ## Known gaps (would do next, in order)
 
 1. `TextInput` cursor is always at the end (backspace, ctrl-u, paste; no ←/→ editing).

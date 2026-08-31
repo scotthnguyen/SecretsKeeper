@@ -76,6 +76,7 @@ export function ShareEditor({ dir, ownerId, initial, onSubmit, onCancel, focus =
       <Text>
         Share with <Text dimColor>({selectedCount} selected · space = read+write, r / w = individual)</Text>
       </Text>
+      <Text dimColor>  write without read = can change the value but never see it</Text>
       {top > 0 && <Text dimColor>  ↑ {top} more</Text>}
       {visible.map((row, i) => {
         const selected = top + i === index;
@@ -93,7 +94,6 @@ export function ShareEditor({ dir, ownerId, initial, onSubmit, onCancel, focus =
             <Text color={row.canWrite ? 'green' : undefined} dimColor={!row.canWrite}>
               {row.canWrite ? '[w]' : '[ ]'}
             </Text>
-            {row.canWrite && !row.canRead && <Text dimColor>  write-only: sees the key, not the value</Text>}
           </Box>
         );
       })}

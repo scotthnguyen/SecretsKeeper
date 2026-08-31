@@ -1,6 +1,6 @@
 // Root component: decides between login and the authenticated app, owns the session + nav state.
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Box, Text, useApp, useInput } from 'ink';
+import { Text, useApp, useInput } from 'ink';
 import type { MeResponse } from '@secrets/shared';
 import { ApiClient, ApiError, describeError } from './api.js';
 import type { Config } from './config.js';
@@ -10,6 +10,8 @@ import { LoginView } from './views/LoginView.js';
 import { MainMenu } from './views/MainMenu.js';
 import { SecretListView } from './views/SecretListView.js';
 import { SecretDetailView } from './views/SecretDetailView.js';
+import { CreateSecretView } from './views/CreateSecretView.js';
+import { DirectoryView } from './views/DirectoryView.js';
 import { Screen, ErrorLine } from './ui/Screen.js';
 
 type Phase =
@@ -185,12 +187,16 @@ function Router({ route }: { route: Route }) {
       return <SecretListView />;
     case 'secret':
       return <SecretDetailView key={route.id} id={route.id} />;
-    default:
+    case 'create':
+      return <CreateSecretView />;
+    case 'directory':
+      return <DirectoryView />;
+    case 'admin':
       return <NotBuilt name={route.name} />;
   }
 }
 
-/** Placeholder for views that land in later phases. */
+/** Placeholder until the admin phase lands. */
 function NotBuilt({ name }: { name: string }) {
   const nav = useNav();
   useInput((_input, key) => {
@@ -198,9 +204,7 @@ function NotBuilt({ name }: { name: string }) {
   });
   return (
     <Screen title={name} hints={[['esc', 'back']]}>
-      <Box>
-        <Text dimColor>“{name}” is not built yet.</Text>
-      </Box>
+      <Text dimColor>“{name}” is not built yet.</Text>
     </Screen>
   );
 }

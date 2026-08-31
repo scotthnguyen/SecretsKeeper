@@ -37,7 +37,7 @@ export function Menu<T>({
   emptyText = '(nothing here)',
   labelWidth,
 }: Props<T>) {
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(() => Math.max(0, items.findIndex((i) => !i.disabled)));
   const [top, setTop] = useState(0);
 
   // Keep the highlight valid when the list shrinks (e.g. after a delete).

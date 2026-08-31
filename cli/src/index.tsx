@@ -1,15 +1,12 @@
-// Phase 0 placeholder: proves Ink 7 + React 19 + tsx work together. The CLI session replaces this.
 import React from 'react';
-import { render, Box, Text } from 'ink';
-import { DEFAULT_SERVER_URL } from '@secrets/shared';
+import { render } from 'ink';
+import { App } from './app.js';
+import { loadConfig } from './config.js';
 
-function App() {
-  return (
-    <Box flexDirection="column" borderStyle="round" paddingX={1}>
-      <Text bold>SecretsKeeper</Text>
-      <Text dimColor>scaffold OK — server: {DEFAULT_SERVER_URL}</Text>
-    </Box>
-  );
+if (!process.stdin.isTTY) {
+  console.error('secrets: this is an interactive TUI and needs a terminal (stdin is not a TTY).');
+  process.exit(1);
 }
 
-render(<App />);
+const config = loadConfig();
+render(<App config={config} />);

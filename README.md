@@ -14,6 +14,31 @@ cli/      Ink 7 TUI          shared/   HTTP contract (zod schemas, routes, error
 server/   Express 5 + better-sqlite3, raw SQL, no ORM
 ```
 
+## Stack
+
+| Layer      | Tool                                   | Assignment requirement                          |
+|------------|----------------------------------------|-------------------------------------------------|
+| CLI        | **TypeScript**, **Ink 7.1** (React 19) | CLI in JS/TS, built with Ink                     |
+| Backend    | **TypeScript**, Node 24, Express 5     | JS/TS or Python backend                          |
+| Database   | SQLite via `better-sqlite3`, one `schema.sql` | local, no cloud services or infrastructure |
+| Auth       | GitHub OAuth2 (browser round-trip, no copy/paste); 30-day sessions in `~/.config/secrets-cli/session.json` | seamless social login, sessions persist across restarts |
+| Contract   | `zod` schemas shared by server and CLI | —                                                |
+| Tests      | `node:test` (30 tests on the access rule and fixture) | —                                     |
+
+Every operation the assignment lists, and where it is:
+
+| Operation                                        | Where                                            |
+|--------------------------------------------------|--------------------------------------------------|
+| Login / Logout                                   | login screen (browser) · main menu → *Log out*   |
+| List all K/V pairs visible to you                | *Secrets*                                        |
+| Create secrets with read/write scopes            | *New secret* → share step (users, teams, whole org, any mix, read and write separately) |
+| Update secrets / change scopes                   | secret detail → `e` (writers) · `s` (owner)      |
+| Admin: create users, teams; promote to admin; reassign/delete users and teams | *Admin* menu (admins are seeded, or promoted by an admin) |
+| List all teams and users in org (for sharing)    | *Directory* (any user)                           |
+
+Users belong to exactly one org (structural: a user row needs an `org_id`, and only provisioned
+users can log in). Teams are optional — a user may be on none.
+
 ## Setup
 
 Prerequisites: Node ≥ 22, a GitHub account.

@@ -118,8 +118,9 @@ visible  = canRead or canWrite        // write-only callers see the key but not 
     those secrets are kept; grants *to* the deleted user are dropped). Deleting a person must not
     destroy secrets a team depends on. Deleting a team drops its grants and memberships.
 12. Secret delete exists and is owner-only.
-13. Write does not imply read in the model. The CLI share UI defaults a newly selected principal
-    to read+write, with read as a separate toggle — independent model, sane default.
+13. Write does not imply read in the model. The CLI share editor exposes the two bits directly:
+    space toggles read, `w` toggles write. Write-only is a legal, labelled state (use case: a
+    rotation job that can replace a secret without being able to read it).
 14. CLI is an **interactive Ink TUI**, not subcommands: views = login, main menu, secret list,
     secret detail, create+share flow, org directory, admin menu. Subcommand shortcuts only if
     Phase 5 has room.

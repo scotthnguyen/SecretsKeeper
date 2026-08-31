@@ -4,7 +4,7 @@ import { Text, useApp, useInput } from 'ink';
 import type { MeResponse } from '@secrets/shared';
 import { ApiClient, ApiError, describeError } from './api.js';
 import type { Config } from './config.js';
-import { NavContext, SessionContext, useNav, type Nav, type Route, type Session } from './context.js';
+import { NavContext, SessionContext, type Nav, type Route, type Session } from './context.js';
 import { clearSession, loadSession, saveSession } from './session.js';
 import { LoginView } from './views/LoginView.js';
 import { MainMenu } from './views/MainMenu.js';
@@ -12,6 +12,7 @@ import { SecretListView } from './views/SecretListView.js';
 import { SecretDetailView } from './views/SecretDetailView.js';
 import { CreateSecretView } from './views/CreateSecretView.js';
 import { DirectoryView } from './views/DirectoryView.js';
+import { AdminView } from './views/AdminView.js';
 import { Screen, ErrorLine } from './ui/Screen.js';
 
 type Phase =
@@ -192,19 +193,7 @@ function Router({ route }: { route: Route }) {
     case 'directory':
       return <DirectoryView />;
     case 'admin':
-      return <NotBuilt name={route.name} />;
+      // Admin is hidden from the menu for non-admins; the server enforces it regardless.
+      return <AdminView />;
   }
-}
-
-/** Placeholder until the admin phase lands. */
-function NotBuilt({ name }: { name: string }) {
-  const nav = useNav();
-  useInput((_input, key) => {
-    if (key.escape) nav.pop();
-  });
-  return (
-    <Screen title={name} hints={[['esc', 'back']]}>
-      <Text dimColor>“{name}” is not built yet.</Text>
-    </Screen>
-  );
 }

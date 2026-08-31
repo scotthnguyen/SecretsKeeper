@@ -106,3 +106,18 @@ auth route on a session-mode scratch server without touching GitHub (minted a se
 
 **LLM mistakes.** None caught in this phase. (The browser round-trip itself is verified by the
 human, below, since it needs a real GitHub account.)
+
+## 2026-08-30 — Phase 5 (server side): README, LLM_USAGE, clean-clone check
+
+**Handoff.** After the real GitHub round-trip succeeded (`login: scotthnguyen (#…)`), asked for
+the docs. CLI-dependent parts left as marked placeholders for the CLI session.
+
+**What the LLM did.** Replaced the stub README (quickstart with OAuth-app registration, seed table,
+architecture, access rule, login flow, errors, admin semantics, tests, deliberate limitations).
+Drafted `LLM_USAGE.md` from this file. Cloned the repo into a scratch dir and verified from
+scratch: `npm install`, typecheck (0 errors), 30/30 tests, seed, dev-mode server answers, and
+session mode without `.env` exits with a clear message.
+
+**Overrides.** None yet.
+
+**LLM mistakes.** None caught in this phase.
